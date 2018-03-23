@@ -7,8 +7,8 @@ namespace MyFavouriteBooks.Models
 {
     public interface IBooksRepository
     {
-        void AddBook(Book book);
-        void RemoveBook(Book book);
-        IEnumerable<Book> GetBooks();
+        Task AddBook(Book book);
+        Task RemoveBook(Book book);
+        IEnumerable<Book> GetBooks(string userId);
     }
 }

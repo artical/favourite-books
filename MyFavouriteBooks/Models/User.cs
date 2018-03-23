@@ -11,8 +11,6 @@ namespace MyFavouriteBooks.Models
 {
     public class User : IdentityUser
     {
-        public string Name { get; set; }
-
         [BindNever]
         [JsonIgnore]
         [IgnoreDataMember]

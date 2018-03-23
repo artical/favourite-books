@@ -12,6 +12,7 @@ namespace MyFavouriteBooks.Models
         {
             this.context = _context;
         }
+        //Task<int> ? IF = 1 ok, if = 0 error?
         public async Task AddBook(Book book)
         {
             var dbEntry = context.Books.FirstOrDefault(x => x.ISBN == book.ISBN);
@@ -27,7 +28,7 @@ namespace MyFavouriteBooks.Models
             });
             return;
         }
-
+        //skip top10 paginating
         public IEnumerable<Book> GetBooks(string userId)
         {
             return context.UserBooks.Where(x => x.UserId == userId).Select(x=>x.Book);

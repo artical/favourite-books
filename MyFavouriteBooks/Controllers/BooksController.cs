@@ -11,30 +11,31 @@ namespace MyFavouriteBooks.Controllers
     public class BooksController : Controller
     {
         private IBooksRepository repository;
-        BooksController (IBooksRepository _repository)
+        public BooksController (IBooksRepository _repository)
         {
             this.repository = _repository;
         }
 
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Book> Get()
         {
-            return new string[] { "value1", "value2" };
+            string claimId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;///int.Parse(User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value);
+            return repository.GetBooks(claimId);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]Book book)
         {
-
+            repository.AddBook(book);
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete([FromBody]Book book)
         {
-
+            repository.RemoveBook(book);
         }
     }
 }

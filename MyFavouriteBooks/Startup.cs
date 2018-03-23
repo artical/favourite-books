@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using MyFavouriteBooks.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace MyFavouriteBooks
 {
@@ -77,6 +78,11 @@ namespace MyFavouriteBooks
             
             //services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
             services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My Favourite App API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,7 +95,12 @@ namespace MyFavouriteBooks
 
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Favourite Books API V1");
+            });
         }
     }
 }

@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "name": "asp.net",
+  "private": true,
+  "devDependencies": {
+
+
+    "aspnet-webpack": "^2.0.1",
+
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+
+    "extract-text-webpack-plugin": "^2.0.0",
+    "css-loader": "^0.28.11",
+    "style-loader": "^0.20.3",
+    "url-loader": "^1.0.1",
+    "file-loader": "^1.1.11",
+    "event-source-polyfill": "^0.0.12",
+
+    "vue": "^2.5.16",
+    "vue-loader": "^14.2.2",
+    "vue-router": "^2.3.0",
+    "vue-template-compiler": "^2.5.16",
+    "bootstrap-vue": "^2.0.0-rc.2",
+    "@websanova/vue-auth": "^2.21.3-beta",
+    "axios": "^0.18.0",
+    "vue-axios": "^2.0.2",
+
+    "webpack": "^2.7.0",
+    "webpack-hot-middleware": "^2.21.2"
+  }
+}

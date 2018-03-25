@@ -14,6 +14,7 @@ using MyFavouriteBooks.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 
 namespace MyFavouriteBooks
 {
@@ -81,7 +82,23 @@ namespace MyFavouriteBooks
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "My Favourite App API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info {
+                    Title = "My Favourite Books App",
+                    Version = "v1",
+                    Contact = new Contact { Name = "Konstantin Ivanov", Email = "konstantin.ivn@gmail.com"},
+                    Description = "ASP.NET Core Web API for user list of favourite books. It includes user registration and login, adding and removing favourite books from list."
+                });
+                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                {
+                    Type = "oauth2",
+                    Flow = "implicit",
+                    AuthorizationUrl = "http://localhost:5004/oauth/dialog",
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "readAccess", "Access read operations" },
+                        { "writeAccess", "Access write operations" }
+                    }
+                });
             });
         }
 
@@ -91,15 +108,33 @@ namespace MyFavouriteBooks
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                {
+                    HotModuleReplacement = true
+                });
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" });
+            });
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Favourite Books API V1");
+                
             });
         }
     }

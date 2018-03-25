@@ -1,11 +1,13 @@
 ﻿import Vue from 'vue';
+import NavMenu from '../nav/nav.vue.html'
 
+Vue.component('nav-menu', NavMenu);
 
 export default {
-    name: 'app',
+    name: 'App',
     data() {
         return {
-            message: 'Welcome to Vue.js'
+            
         }
     }
 }

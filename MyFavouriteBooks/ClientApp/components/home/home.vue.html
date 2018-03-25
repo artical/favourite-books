@@ -1,0 +1,47 @@
+﻿<template>
+    <div>
+        <b-jumbotron header="My Favourite Books" lead="Search books using the ISBN and add to your list">
+            <div class="input-group">
+                <input type="text" class="form-control" v-model="isbn" placeholder="Enter ISBN" @keydown="errors = ''">
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="button" @click="searchBook">Search</button>
+                </span>
+                <b-form-invalid-feedback v-show="error" v-text="error">
+
+                </b-form-invalid-feedback>
+            </div>
+        </b-jumbotron>
+        <div v-if="book" class="card" style="width: 15rem;">
+            <img class="card-img-top" :src="book.CoverThumb" alt="Book cover" />
+            <div class="card-body">
+                <h4 class="card-title">{{ book.Title }}</h4>
+                <p class="card-text">{{ book.Authors }}</p>
+                <p class="card-text">{{ book.Subtitle }} {{ book.Description }}</p>
+
+                <p class="card-text">{{ book.ISBN }}</p>
+                <a href="#" class="btn btn-primary" @click="addBook">Add to Favourite</a>
+            </div>
+        </div>
+        <div v-if="$auth.ready()">
+            auth
+            <span v-if="$auth.check()">login</span>
+            <span v-show="!$auth.check()">not login</span>
+        </div>
+
+        <ul v-for="favBook in favBooks">
+            <li> {{ favBook.Title }}</li>
+        </ul>
+
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="button" @click="register">Reg</button>
+                <button class="btn btn-secondary" type="button" @click="login">Login</button>
+                <button class="btn btn-secondary" type="button" @click="login">Fetch</button>
+            </span>
+        </div>
+
+    </div>
+</template>
+
+<script src="./home.js"></script>
+<style src="./home.css"></style>

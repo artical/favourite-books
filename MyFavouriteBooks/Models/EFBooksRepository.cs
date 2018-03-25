@@ -13,42 +13,53 @@ namespace MyFavouriteBooks.Models
             this.context = _context;
         }
         //Task<int> ? IF = 1 ok, if = 0 error?
-        public async Task AddBook(Book book)
+        public async Task<int> AddBook(Book book, string userId)
         {
             var dbEntry = context.Books.FirstOrDefault(x => x.ISBN == book.ISBN);
             if (dbEntry == null)
             {
-                await context.Books.AddAsync(book);
+               context.Books.Add(book);
             }
-
-            await context.UserBooks.AddAsync(new UserBook
+            
+            context.UserBooks.Add(new UserBook
             {
                 ISBN = book.ISBN,
-                UserId = "1"
+                UserId = userId,
+
             });
-            return;
+            int result = 0;
+            try
+            {
+                 result = await context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            
+            return result;
         }
         //skip top10 paginating
         public IEnumerable<Book> GetBooks(string userId)
         {
-            return context.UserBooks.Where(x => x.UserId == userId).Select(x=>x.Book);
+            return context.UserBooks.Where(x => x.UserId == userId).Select(x=>x.Book).ToList();
         }
 
-        public async Task RemoveBook(Book book)
+        public async Task<int> RemoveBook(string bookId, string userId)
         {
-            var dbEntry = context.Books.FirstOrDefault(x => x.ISBN == book.ISBN);
+            var dbEntry = context.Books.FirstOrDefault(x => x.ISBN == bookId);
             if (dbEntry != null)
             {
                 context.UserBooks.Remove(new UserBook
                 {
-                    ISBN = book.ISBN,
-                    UserId = "1"
+                    ISBN = bookId,
+                    UserId = userId
                 });
-                await context.SaveChangesAsync();
+                return await context.SaveChangesAsync();
             }
             else
             {
-                ///error
+                return 0;
             }
         }
     }

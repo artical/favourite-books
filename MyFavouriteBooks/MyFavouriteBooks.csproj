@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20180325094258_Init.cs" />
+    <Compile Remove="Migrations\20180325094258_Init.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.3.0" />
@@ -15,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\components\nav\" />
     <Folder Include="ClientApp\components\search\" />
     <Folder Include="ClientApp\components\list\" />
   </ItemGroup>

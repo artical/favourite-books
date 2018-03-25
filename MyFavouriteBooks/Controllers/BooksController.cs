@@ -31,17 +31,19 @@ namespace MyFavouriteBooks.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Book book)
+        [HttpPost]
+        public async Task Post([FromBody]Book book)
         {
-            repository.AddBook(book);
+            string claimId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+            await repository.AddBook(book, claimId);
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete([FromBody]Book book)
+        public async Task Delete(string id)
         {
-            repository.RemoveBook(book);
+            string claimId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+            await repository.RemoveBook(id, claimId);
         }
     }
 }

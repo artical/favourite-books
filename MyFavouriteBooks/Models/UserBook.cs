@@ -16,8 +16,14 @@ namespace MyFavouriteBooks.Models
 
         [BindNever]
         [JsonIgnore]
-        [ForeignKey("UserId")]
+        [ForeignKey("ISBN")]
         [IgnoreDataMember]
         public Book Book { get; set; }
+
+        [BindNever]
+        [JsonIgnore]
+        [ForeignKey("UserId")]
+        [IgnoreDataMember]
+        public User User { get; set; }
     }
 }

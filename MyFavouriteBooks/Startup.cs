@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using MyFavouriteBooks.Models.Account;
 
 namespace MyFavouriteBooks
 {
@@ -28,7 +29,7 @@ namespace MyFavouriteBooks
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IBooksRepository, EFBooksRepository>();
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -76,6 +77,8 @@ namespace MyFavouriteBooks
             })
             .AddEntityFrameworkStores<IdentityDbContext>()
             .AddDefaultTokenProviders();
+
+            
             
             //services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
             services.AddMvc();
@@ -100,6 +103,8 @@ namespace MyFavouriteBooks
                     }
                 });
             });
+
+            return services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -120,6 +125,17 @@ namespace MyFavouriteBooks
 
             app.UseStatusCodePages();
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+            
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Favourite Books API V1");
+
+            });
+         
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -130,12 +146,7 @@ namespace MyFavouriteBooks
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Favourite Books API V1");
-                
-            });
+            
         }
     }
 }

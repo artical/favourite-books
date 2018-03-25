@@ -1,0 +1,95 @@
+﻿<template>
+    <div>
+        <div>
+            <b-navbar toggleable type="light" variant="light">
+                <b-navbar-toggle target="nav_text_collapse"></b-navbar-toggle>
+                <b-navbar-brand>
+                    <img src="images/logo.png" class="d-inline-block align-top" alt="BV">
+                    My Favourite Books
+                </b-navbar-brand>
+                <b-collapse is-nav id="nav_text_collapse">
+                    <b-navbar-nav>
+                        <b-nav-item href="/swagger">Swagger</b-nav-item>
+                    </b-navbar-nav>
+                    <b-navbar-nav class="ml-auto" v-if="$auth.ready() && !$auth.check()">
+                        <b-nav-item v-b-modal.modalLogin>Login</b-nav-item>
+                        <b-nav-item v-b-modal.modalRegister>Register</b-nav-item>
+                    </b-navbar-nav>
+                    <b-navbar-nav class="ml-auto" v-if="$auth.ready() && $auth.check()">
+                        <b-nav-item href="#" @click="logout">Logout</b-nav-item>
+                    </b-navbar-nav>
+                </b-collapse>
+            </b-navbar>
+        </div>
+        <b-modal id="modalLogin"
+                 title="Login"
+                 ref="modalL"
+                 @ok="login"
+                 @shown="clearName">
+            <form @submit.stop.prevent="handleLogin">
+                <b-form-group id="exampleInputGroup1"
+                              label="Username:"
+                              label-for="login_username">
+                    <b-form-input id="login_username" name="login"
+                                  type="text"
+                                  v-model="credentials.username"
+                                  required
+                                  placeholder="Enter username">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group id="exampleInputGroup2"
+                              label="Password:"
+                              label-for="login_password">
+                    <b-form-input id="login_password" name="password"
+                                  type="password"
+                                  v-model="credentials.password"
+                                  required
+                                  placeholder="Enter username">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-invalid-feedback v-show="error" v-text="error">
+
+                </b-form-invalid-feedback>
+            </form>
+        </b-modal>
+
+        <b-modal id="modalRegister"
+                 title="Register"
+                 ref="modalR"
+                 @ok="register"
+                 @shown="clearName">
+            <form @submit.stop.prevent="handleRegister">
+                <b-form-group id="exampleInputGroup1"
+                              label="Username:"
+                              label-for="login_username">
+                    <b-form-input id="register_username" name="login"
+                                  type="text"
+                                  v-model="credentials.username"
+                                  required
+                                  placeholder="Enter username">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group id="exampleInputGroup2"
+                              label="Password:"
+                              label-for="login_password">
+                    <b-form-input id="register_password" name="password"
+                                  type="password"
+                                  v-model="credentials.password"
+                                  required
+                                  placeholder="Enter username">
+                    </b-form-input>
+                </b-form-group>
+                <b-form-invalid-feedback v-show="error" v-text="error">
+
+                </b-form-invalid-feedback>
+            </form>
+        </b-modal>
+    </div>
+</template>
+
+<script src="./nav.js"></script>
+<style>
+    .invalid-feedback {
+        display: block;
+    }
+</style>

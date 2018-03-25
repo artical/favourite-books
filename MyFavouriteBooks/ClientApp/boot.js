@@ -26,6 +26,7 @@ Vue.use(VueAuth, {
     token: [{ name: 'token', authType: 'bearer', foundIn: 'response' }]
 });
 
+var bus = new Vue();
 
 new Vue({
     el: '#app-root',

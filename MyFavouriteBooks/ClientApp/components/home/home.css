@@ -2,3 +2,17 @@
 {
     display: block;
 }
+.container-search{
+    margin-top: 1rem;
+}
+
+.container-books {
+    border: 1px solid #f7f7f9;
+}
+
+.container-books .card {
+    float: left;
+    width: 12rem;
+    padding: .5rem;
+    margin: 0 0.5rem 2rem;
+}

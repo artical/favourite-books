@@ -1,5 +1,7 @@
 ﻿import Vue from 'vue';
+import EventBus from '../../eventbus';
 import { error } from 'util';
+
 export default {
     data() {
         return {
@@ -28,6 +30,7 @@ export default {
                 fetchUser: true
             })
                 .then(() => {
+                    this.emitLogin();
                     this.$refs.modalL.hide()
                 }, (error) => {
                     this.error = error.response.data;
@@ -62,6 +65,7 @@ export default {
             this.$auth.logout({
                 redirect: { name: 'default' }
             });
+            this.emitLogout();
         },
         clear: function () {
 
@@ -70,6 +74,12 @@ export default {
             this.credentials.username = '';
             this.credentials.password = '';
             this.error = '';
+        },
+        emitLogin: function() {
+            EventBus.$emit('login', '');
+        },
+        emitLogout: function () {
+            EventBus.$emit('logout', '');
         }
     }
 }

@@ -1,17 +1,17 @@
 ﻿import Vue from 'vue';
+import EventBus from '../../eventbus';
 
 export default {
     name: 'HomePage',
     data() {
         return {
-            credentials: {
-                login: "kaka12",
-                password: "12b33a1!"
-            },
-            book: undefined,
+            book: '',
             isbn: '9789000035526',
             favBooks: [],
-            error: ''
+            error: '',
+            totalBooks: 0,
+            perPage: 8,
+            currentPage: 1
         }
     },
     computed: {
@@ -57,12 +57,15 @@ export default {
             }
         },
         searchBook: function () {
-            this.book = null;
+            this.log('search', this.isbn);
+            this.book = '';
             this.error = '';
             if (this.isValidISBN(this.isbn)) {
                 Vue.axios.get('https://www.booknomads.com/api/v0/isbn/' + this.isbn).
                     then(response => {
                         this.book = response.data
+                        this.book.Authors = this.book.Authors ? this.book.Authors.map(function (item, index) { return item.Name }).join(): '';
+                        this.book.Subjects = this.book.Subjects ? this.book.Subjects.join() : '';
                     }).
                     catch(e => {
                         console.log(e)
@@ -73,58 +76,76 @@ export default {
                 this.error = 'ISBN is invalid';
                 console.log(this.error)
             }
-            
-            
         },
         addBook: function () {
-            var favBook = this.book;
-            favBook.Authors = favBook.Authors.map(function (item, index) { return item.Name }).join();
-            favBook.Subjects = favBook.Subjects.join();
-            console.log(favBook)
-            this.$http.post('/api/books/', favBook).
+            this.log('add', this.book)
+            this.$http.post('/api/books/', this.book).
                 then(response => {
-                    console.log(response.data)
                     this.favBooks.unshift(this.book)
+                    this.book = ''
                 }).
                 catch(e => {
                     console.log(e)
                     console.log(e.response.data)
                 })
         },
-        login: function () {
-            this.$auth.login({
-                data: this.credentials, // Axios
-                rememberMe: true,
-                redirect: '/',
-                fetchUser: true
-            })
-                .then(() => {
-                    console.log('success ' + this.context);
-                }, (res) => {
-                    console.log('error ' + this.context);
-                    this.error = res.data;
-                });
+        removeBook: function (book) {
+            this.log('remove', this.book)
+            this.$http.delete('/api/books/' + book.ISBN).
+                then(response => {
+                    console.log(response.data)
+                    this.favBooks.splice(this.favBooks.indexOf(book), 1);
+                }).
+                catch(e => {
+                    console.log(e)
+                    console.log(e.response.data)
+                })
         },
-        register: function () {
+        log: async function (type, details) {
+            this.$http.post('/api/logger/', {
+                timestamp: Date.now(),
+                logType: type,
+                details: JSON.stringify(details)
+            }
+            ).
+                then(response => {
+                    console.log('test ok')
+                }).
+                catch(e => {
+                    console.log(e)
+                    console.log(e.response.data)
+                })
+        },
+        fetchFavBooks: function () {
             
-            this.$auth.registerData = { url: '/api/account/register', method: 'POST' };
-            var formData = new FormData();
-            formData.append('name', this.credentials.login);
-            formData.append('password', this.credentials.password);
-            this.$auth.register({
-                body: formData, // Vue-resoruce
-                data: formData, // Axios
-                autoLogin: true,
-                rememberMe: true,
-                success: function () {
-                    console.log('success ' + this.context);
-                },
-                error: function (res) {
-                    console.log('error ' + this.context);
-                    this.error = res.data;
+            if (this.$auth.check()) {
+                var options = {
+                    params: {
+                        page: this.page,
+                        per_page: this.perPage
+                    }
                 }
-            });
+                this.$http.get('/api/books/', options).
+                    then(response => {
+                        this.favBooks = response.data.books
+                        this.totalBooks = response.data.total
+                        this.currentPage = this.page
+                    }).
+                    catch(e => {
+                        console.log(e)
+                        console.log(e.response.data)
+                    })
+            }
         }
-
+    },
+    mounted: function() {
+        this.fetchFavBooks(this.page);
+        EventBus.$on("login", function (payLoad) {
+            this.fetchFavBooks
+        });
+        EventBus.$on("logout", function (payLoad) {
+            this.favBooks = []
+        });
     }
+    
 }

@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Identity;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using MyFavouriteBooks.Models.Account;
+using MyFavouriteBooks.Services.FileLogger;
+using System.IO;
 
 namespace MyFavouriteBooks
 {
@@ -91,16 +93,15 @@ namespace MyFavouriteBooks
                     Contact = new Contact { Name = "Konstantin Ivanov", Email = "konstantin.ivn@gmail.com"},
                     Description = "ASP.NET Core Web API for user list of favourite books. It includes user registration and login, adding and removing favourite books from list."
                 });
-                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
-                {
-                    Type = "oauth2",
-                    Flow = "implicit",
-                    AuthorizationUrl = "http://localhost:5004/oauth/dialog",
-                    Scopes = new Dictionary<string, string>
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                     {
-                        { "readAccess", "Access read operations" },
-                        { "writeAccess", "Access write operations" }
+                        Name = "Authorization",
+                        In = "header"
                     }
+                );
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "Bearer", new[] { "readAccess", "writeAccess" } }
                 });
             });
 
@@ -108,8 +109,11 @@ namespace MyFavouriteBooks
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
+            //loggerFactory.AddDebug();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -44,14 +44,14 @@ export default {
                     chars[9] = 10;
                 }
                 var sum = 0;
-                for (var i = 0; i < chars.length; i++) {
+                for (let i = 0; i < chars.length; i++) {
                     sum += ((10 - i) * parseInt(chars[i]));
                 }
                 return (sum % 11 == 0);
             } else if (isbn.length == 13) {
                 var chars = isbn.split('');
                 var sum = 0;
-                for (var i = 0; i < chars.length; i++) {
+                for (let i = 0; i < chars.length; i++) {
                     if (i % 2 == 0) {
                         sum += parseInt(chars[i]);
                     } else {
@@ -114,7 +114,7 @@ export default {
                 catch(e => {
                     console.log(e)
                     console.log(e.response.data)
-                    if (e.response.data.error.message && e.response.data.error.message == 'already exists')
+                    if (e.response.data.error.message && e.response.data.error.message === 'already exists')
                         this.isAdded = true;
                 })
         },

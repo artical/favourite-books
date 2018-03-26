@@ -7,9 +7,9 @@ namespace MyFavouriteBooks.Models.ViewModels
 {
     public class BooksViewModel
     {
-        public int total { get; set; }
-        public int page { get; set; }
-        public int per_page { get; set; }
-        public IEnumerable<Book> books { get; set; }
+        public int Total { get; set; }
+        public int Page { get; set; }
+        public int Per_page { get; set; }
+        public IEnumerable<Book> Books { get; set; }
     }
 }

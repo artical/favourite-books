@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "9f47b8fb98aa37273173"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "08d02135cea9c3ba8963"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -1910,11 +1910,11 @@ exports.default = {
             } else if (isbn.length == 13) {
                 var chars = isbn.split('');
                 var sum = 0;
-                for (var i = 0; i < chars.length; i++) {
-                    if (i % 2 == 0) {
-                        sum += parseInt(chars[i]);
+                for (var _i = 0; _i < chars.length; _i++) {
+                    if (_i % 2 == 0) {
+                        sum += parseInt(chars[_i]);
                     } else {
-                        sum += parseInt(chars[i]) * 3;
+                        sum += parseInt(chars[_i]) * 3;
                     }
                 }
                 return sum % 10 == 0;
@@ -1974,7 +1974,7 @@ exports.default = {
             }).catch(function (e) {
                 console.log(e);
                 console.log(e.response.data);
-                if (e.response.data.error.message && e.response.data.error.message == 'already exists') _this3.isAdded = true;
+                if (e.response.data.error.message && e.response.data.error.message === 'already exists') _this3.isAdded = true;
             });
         },
         removeBook: function removeBook(book) {

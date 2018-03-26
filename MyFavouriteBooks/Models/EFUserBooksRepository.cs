@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace MyFavouriteBooks.Models
 {
-    public class EFBooksRepository : IBooksRepository
+    public class EFUserBooksRepository : IUserBooksRepository
     {
         private ApplicationDbContext context;
-        public EFBooksRepository(ApplicationDbContext _context)
+        public EFUserBooksRepository(ApplicationDbContext _context)
         {
             this.context = _context;
         }

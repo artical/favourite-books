@@ -32,8 +32,19 @@ namespace MyFavouriteBooks.Controllers
             _signInManager = signInManager;
             //_options = optionsAccessor.Value;
         }
-
-        [HttpPost("[action]")]
+        /// <summary>
+        /// Register a new user with provided credentials
+        /// </summary>
+        /// <param name="model">user data</param>
+        /// <returns></returns>
+        /// <response code="200">User created</response>
+        /// <response code="400">Missing/invalid values or username is already taken</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost("register")]
+        [AllowAnonymous]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Register(RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -65,7 +76,11 @@ namespace MyFavouriteBooks.Controllers
             return BadRequest(ModelState);
         }
 
-
+        /// <summary>
+        /// Login user into the system using username and password (give access token)
+        /// </summary>
+        /// <param name="credentials">user credentials</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("token")]
         public async Task Token([FromBody] Credentials credentials)

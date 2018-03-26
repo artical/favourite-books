@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MyFavouriteBooks.Models
 {
-    public interface IBooksRepository
+    public interface IUserBooksRepository
     {
         Task<int> AddBook(Book book, string userId);
         Task<int> RemoveBook(string bookId, string userId);

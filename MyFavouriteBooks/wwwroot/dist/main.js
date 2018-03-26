@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "d98497addc09d1398d75"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "9f47b8fb98aa37273173"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -1936,6 +1936,7 @@ exports.default = {
                     }).join() : '';
                     _this.book.Subjects = _this.book.Subjects ? _this.book.Subjects.join() : '';
                     _this.checkBook(_this.book.ISBN);
+                    _this.isbn = '';
                 }).catch(function (e) {
                     console.log(e);
                     console.log(e.response.data.error);
@@ -1952,7 +1953,7 @@ exports.default = {
             this.isAdded = false;
             this.isChecked = false;
             if (this.$auth.check()) {
-                this.$http.get('/api/books/' + isbn).then(function (response) {
+                this.$http.get('/api/user/books/' + isbn).then(function (response) {
                     _this2.isChecked = true;
                     _this2.isAdded = response.data ? true : false;
                 }).catch(function (e) {
@@ -1966,7 +1967,7 @@ exports.default = {
             var _this3 = this;
 
             this.log('add', this.book);
-            this.$http.post('/api/books/', this.book).then(function (response) {
+            this.$http.post('/api/user/books/', this.book).then(function (response) {
                 _this3.favBooks.unshift(_this3.book);
                 _this3.book = '';
                 _this3.totalBooks++;
@@ -1980,7 +1981,7 @@ exports.default = {
             var _this4 = this;
 
             this.log('remove', this.book);
-            this.$http.delete('/api/books/' + book.ISBN).then(function (response) {
+            this.$http.delete('/api/user/books/' + book.ISBN).then(function (response) {
                 var i = _this4.favBooks.map(function (item) {
                     return item.ISBN;
                 }).indexOf(book.ISBN);
@@ -2038,7 +2039,7 @@ exports.default = {
                         query: this.query
                     }
                 };
-                this.$http.get('/api/books/', options).then(function (response) {
+                this.$http.get('/api/user/books/', options).then(function (response) {
                     _this5.favBooks = response.data.books;
                     _this5.totalBooks = response.data.total;
                 }).catch(function (e) {

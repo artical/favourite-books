@@ -10,9 +10,11 @@ namespace MyFavouriteBooks.Models
     public class Book
     {
         [Key]
+        [Required]
         [JsonProperty("ISBN")]
         public string ISBN { get; set; }
 
+        [Required]
         [JsonProperty("Title")]
         public string Title { get; set; }
 

@@ -19,6 +19,7 @@ using MyFavouriteBooks.Models.Account;
 using MyFavouriteBooks.Services.FileLogger;
 using System.IO;
 using MyFavouriteBooks.Services;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace MyFavouriteBooks
 {
@@ -34,7 +35,8 @@ namespace MyFavouriteBooks
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IBooksRepository, EFBooksRepository>();
+            services.AddTransient<IUserBooksRepository, EFUserBooksRepository>();
+            services.AddTransient<IBookRepository, EFBookRepository>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration["ConnectionStrings:DefaultConnection"])
@@ -42,26 +44,15 @@ namespace MyFavouriteBooks
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    //options.Audience = AuthOptions.AUDIENCE;
-                    //options.Authority = AuthOptions.AUDIENCE;
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        // укзывает, будет ли валидироваться издатель при валидации токена
                         ValidateIssuer = false,
-                        // строка, представляющая издателя
                         ValidIssuer = AuthOptions.ISSUER,
-
-                        // будет ли валидироваться потребитель токена
                         ValidateAudience = false,
-                        // установка потребителя токена
                         ValidAudience = AuthOptions.AUDIENCE,
-                        // будет ли валидироваться время существования
                         ValidateLifetime = false,
-
-                        // установка ключа безопасности
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        // валидация ключа безопасности
                         ValidateIssuerSigningKey = true,
                     };
                 });
@@ -81,9 +72,6 @@ namespace MyFavouriteBooks
             .AddEntityFrameworkStores<IdentityDbContext>()
             .AddDefaultTokenProviders();
 
-            
-            
-            //services.Configure<JWTSettings>(Configuration.GetSection("JWTSettings"));
             services.AddMvc();
 
             services.AddSwaggerGen(c =>
@@ -100,10 +88,9 @@ namespace MyFavouriteBooks
                         In = "header"
                     }
                 );
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                {
-                    { "Bearer", new[] { "readAccess", "writeAccess" } }
-                });
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
+                var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "MyFavouriteBooks.xml");
+                c.IncludeXmlComments(filePath);
             });
 
             return services.BuildServiceProvider();

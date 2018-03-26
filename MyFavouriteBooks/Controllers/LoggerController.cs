@@ -20,7 +20,10 @@ namespace MyFavouriteBooks.Controllers
             _logger = logger;
         }
         
-        // POST api/<controller>
+        /// <summary>
+        /// Log Search, Adding and Removing books actions
+        /// </summary>
+        /// <param name="logEntry">Log entry to be saved</param>
         [HttpPost]
         public void Post([FromBody]LogEntry logEntry)
         {

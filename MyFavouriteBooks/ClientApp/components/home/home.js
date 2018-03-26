@@ -74,6 +74,7 @@ export default {
                         this.book.Authors = this.book.Authors ? this.book.Authors.map(function (item, index) { return item.Name }).join(): '';
                         this.book.Subjects = this.book.Subjects ? this.book.Subjects.join() : '';
                         this.checkBook(this.book.ISBN)
+                        this.isbn = ''
                     }).
                     catch(e => {
                         console.log(e)
@@ -89,7 +90,7 @@ export default {
             this.isAdded = false;
             this.isChecked = false;
             if (this.$auth.check()) {
-                this.$http.get('/api/books/' + isbn).
+                this.$http.get('/api/user/books/' + isbn).
                     then(response => {
                         this.isChecked = true;
                         this.isAdded = response.data ? true : false
@@ -104,7 +105,7 @@ export default {
         },
         addBook: function () {
             this.log('add', this.book)
-            this.$http.post('/api/books/', this.book).
+            this.$http.post('/api/user/books/', this.book).
                 then(response => {
                     this.favBooks.unshift(this.book)
                     this.book = ''
@@ -119,7 +120,7 @@ export default {
         },
         removeBook: function (book) {
             this.log('remove', this.book)
-            this.$http.delete('/api/books/' + book.ISBN).
+            this.$http.delete('/api/user/books/' + book.ISBN).
                 then(response => {
                     let i = this.favBooks.map(item => item.ISBN).indexOf(book.ISBN);
                     if (i > -1)
@@ -161,7 +162,7 @@ export default {
                         query: this.query
                     }
                 }
-                this.$http.get('/api/books/', options).
+                this.$http.get('/api/user/books/', options).
                     then(response => {
                         this.favBooks = response.data.books
                         this.totalBooks = response.data.total

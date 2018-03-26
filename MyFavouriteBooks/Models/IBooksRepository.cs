@@ -10,5 +10,6 @@ namespace MyFavouriteBooks.Models
         Task<int> AddBook(Book book, string userId);
         Task<int> RemoveBook(string bookId, string userId);
         IEnumerable<Book> GetBooks(string userId);
+        UserBook GetBook(string bookId, string userId);
     }
 }

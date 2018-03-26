@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using MyFavouriteBooks.Models.Account;
 using MyFavouriteBooks.Services.FileLogger;
 using System.IO;
+using MyFavouriteBooks.Services;
 
 namespace MyFavouriteBooks
 {
@@ -138,7 +139,8 @@ namespace MyFavouriteBooks
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Favourite Books API V1");
 
             });
-         
+
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             app.UseMvc(routes =>
             {
@@ -150,7 +152,6 @@ namespace MyFavouriteBooks
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
-            
         }
     }
 }

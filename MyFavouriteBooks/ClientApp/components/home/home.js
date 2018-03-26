@@ -1,5 +1,8 @@
 ﻿import Vue from 'vue';
 import EventBus from '../../eventbus';
+import Pagination from '../pagination/pagination.vue.html'
+
+Vue.component('pagination', Pagination);
 
 export default {
     name: 'HomePage',
@@ -11,7 +14,10 @@ export default {
             error: '',
             totalBooks: 0,
             perPage: 8,
-            currentPage: 1
+            currentPage: 1,
+            isAdded: false,
+            isChecked: false,
+            query: ''
         }
     },
     computed: {
@@ -30,7 +36,8 @@ export default {
     },
     methods: {
         isValidISBN: function (isbn) {
-            isbn = isbn.replace(/[^\dX]/gi, '');
+            //isbn = isbn.replace(/[^\dX]/gi, '');
+            
             if (isbn.length == 10) {
                 var chars = isbn.split('');
                 if (chars[9].toUpperCase() == 'X') {
@@ -66,6 +73,7 @@ export default {
                         this.book = response.data
                         this.book.Authors = this.book.Authors ? this.book.Authors.map(function (item, index) { return item.Name }).join(): '';
                         this.book.Subjects = this.book.Subjects ? this.book.Subjects.join() : '';
+                        this.checkBook(this.book.ISBN)
                     }).
                     catch(e => {
                         console.log(e)
@@ -77,24 +85,48 @@ export default {
                 console.log(this.error)
             }
         },
+        checkBook: function (isbn) {
+            this.isAdded = false;
+            this.isChecked = false;
+            if (this.$auth.check()) {
+                this.$http.get('/api/books/' + isbn).
+                    then(response => {
+                        this.isChecked = true;
+                        this.isAdded = response.data ? true : false
+                    }).
+                    catch(e => {
+                        console.log(e)
+                    })
+            }
+            else {
+                this.isChecked = true;
+            }
+        },
         addBook: function () {
             this.log('add', this.book)
             this.$http.post('/api/books/', this.book).
                 then(response => {
                     this.favBooks.unshift(this.book)
                     this.book = ''
+                    this.totalBooks++;
                 }).
                 catch(e => {
                     console.log(e)
                     console.log(e.response.data)
+                    if (e.response.data.error.message && e.response.data.error.message == 'already exists')
+                        this.isAdded = true;
                 })
         },
         removeBook: function (book) {
             this.log('remove', this.book)
             this.$http.delete('/api/books/' + book.ISBN).
                 then(response => {
-                    console.log(response.data)
-                    this.favBooks.splice(this.favBooks.indexOf(book), 1);
+                    let i = this.favBooks.map(item => item.ISBN).indexOf(book.ISBN);
+                    if (i > -1)
+                        this.favBooks.splice(i, 1)
+                    this.totalBooks--;
+                    if (this.book.ISBN === book.ISBN)
+                        this.isAdded = false
                 }).
                 catch(e => {
                     console.log(e)
@@ -116,30 +148,49 @@ export default {
                     console.log(e.response.data)
                 })
         },
+        fetchFavBookForPage: function (page) {
+            this.currentPage = page;
+            this.fetchFavBooks();
+        },
         fetchFavBooks: function () {
-            
             if (this.$auth.check()) {
                 var options = {
                     params: {
-                        page: this.page,
-                        per_page: this.perPage
+                        page: this.currentPage,
+                        per_page: this.perPage,
+                        query: this.query
                     }
                 }
                 this.$http.get('/api/books/', options).
                     then(response => {
                         this.favBooks = response.data.books
                         this.totalBooks = response.data.total
-                        this.currentPage = this.page
                     }).
                     catch(e => {
                         console.log(e)
                         console.log(e.response.data)
                     })
             }
+        },
+        bookCover: function (coverThumb) {
+            return coverThumb ? coverThumb : 'images/book.png'
+        },
+        containsBook: function (book) {
+            return this.favBooks.includes(book)
+        },
+        searchFavBook: function () {
+            this.log("searchName",this.query)
+            this.currentPage = 1;
+            this.fetchFavBooks();
+        },
+        reset: function () {
+            this.query = '';
+            this.currentPage = 1;
+            this.fetchFavBooks();
         }
     },
     mounted: function() {
-        this.fetchFavBooks(this.page);
+        this.fetchFavBooks(this.currentPage);
         EventBus.$on("login", function (payLoad) {
             this.fetchFavBooks
         });

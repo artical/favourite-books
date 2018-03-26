@@ -12,7 +12,6 @@ namespace MyFavouriteBooks.Models
         {
             this.context = _context;
         }
-        //Task<int> ? IF = 1 ok, if = 0 error?
         public async Task<int> AddBook(Book book, string userId)
         {
             var dbEntry = context.Books.FirstOrDefault(x => x.ISBN == book.ISBN);
@@ -20,13 +19,19 @@ namespace MyFavouriteBooks.Models
             {
                context.Books.Add(book);
             }
-            
-            context.UserBooks.Add(new UserBook
+
+            var userBook = context.UserBooks.FirstOrDefault(x => x.ISBN == book.ISBN && x.UserId == userId);
+            if (userBook != null)
+            {
+                throw new Exception("already exists");
+            }
+            userBook = new UserBook
             {
                 ISBN = book.ISBN,
                 UserId = userId,
-
-            });
+                Added = DateTime.Now
+            };
+            context.UserBooks.Add(userBook);
             int result = 0;
             try
             {
@@ -42,25 +47,27 @@ namespace MyFavouriteBooks.Models
         //skip top10 paginating
         public IEnumerable<Book> GetBooks(string userId)
         {
-            return context.UserBooks.Where(x => x.UserId == userId).Select(x=>x.Book).ToList();
+            return context.UserBooks.Where(x => x.UserId == userId).OrderByDescending(x=>x.Added).Select(x=>x.Book).ToList();
         }
 
         public async Task<int> RemoveBook(string bookId, string userId)
         {
-            var dbEntry = context.Books.FirstOrDefault(x => x.ISBN == bookId);
+            var dbEntry = context.UserBooks.FirstOrDefault(x => x.ISBN == bookId && x.UserId == userId);
             if (dbEntry != null)
             {
-                context.UserBooks.Remove(new UserBook
-                {
-                    ISBN = bookId,
-                    UserId = userId
-                });
-                return await context.SaveChangesAsync();
+                context.UserBooks.Remove(dbEntry);
+                int results = await context.SaveChangesAsync();
+                return results;
             }
             else
             {
                 return 0;
             }
+        }
+
+        public UserBook GetBook(string bookId, string userId)
+        {
+            return context.UserBooks.FirstOrDefault(x => x.ISBN == bookId && x.UserId == userId);
         }
     }
 }

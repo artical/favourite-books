@@ -14,6 +14,12 @@ namespace MyFavouriteBooks.Models
         public string UserId { get; set; }
         public string ISBN { get; set; }
 
+        [JsonIgnore]
+        [BindNever]
+        [IgnoreDataMember]
+        public DateTime Added { get; set; }
+
+
         [BindNever]
         [JsonIgnore]
         [ForeignKey("ISBN")]

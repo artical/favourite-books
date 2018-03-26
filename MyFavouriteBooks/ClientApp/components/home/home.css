@@ -9,6 +9,9 @@
 .container-books {
     border: 1px solid #f7f7f9;
 }
+.container-books .input-group{
+    padding: 1.5rem 0;
+}
 
 .container-books .card {
     float: left;

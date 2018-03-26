@@ -21,9 +21,9 @@
                         <h4 class="card-title">{{ book.Title }}</h4>
                         <p class="card-text">{{ book.Authors }}</p>
                         <p class="card-text">{{ book.Subtitle }} {{ book.Description }}</p>
-
                         <p class="card-text">{{ book.ISBN }}</p>
-                        <a href="#" class="btn btn-primary" @click="addBook" v-if="$auth.check()">Add to Favourite</a>
+                        <a href="#" class="btn btn-primary" @click="addBook" v-if="$auth.check() && isChecked && !isAdded">Add to Favourite</a>
+                        <a href="#" class="btn btn-primary" @click="removeBook(book)" v-if="$auth.check() && isChecked && isAdded">Remove from List</a>
                         <p v-if="!$auth.check()">You must login to add this book to your list</p>
                     </div>
                 </div>
@@ -33,22 +33,33 @@
         
         
 
-        <div class="container text-center"  >
+        <div class="container text-center">
             <h2>My favourite books <b-badge v-if="$auth.check()">{{ totalBooks }}</b-badge></h2>
-            <div class="d-flex justify-content-center flex-wrap container-books clearfix" v-if="$auth.check()">
-                <div class="card" v-for="favBook in favBooks">
-                    <img class="card-img-top" :src="favBook.CoverThumb" alt="Book cover" />
-                    <div class="card-body">
-                        <h4 class="card-title">{{ favBook.Title }}</h4>
-                        <p class="card-text">{{ favBook.Authors }}</p>
-                        <p class="card-text">{{ favBook.Subtitle }} {{ favBook.Description }}</p>
-
-                        <p class="card-text">{{ favBook.ISBN }}</p>
-                        <a href="#" class="btn btn-primary" @click="removeBook( favBook)">Remove</a>
+            
+            <div class="container container-books" v-if="$auth.check()">
+                <b-input-group>
+                    <b-form-input v-model="query" placeholder="Find a favourite book by Title"></b-form-input>
+                    <b-input-group-append>
+                        <b-btn v-model="query" @click="searchFavBook">Search</b-btn>
+                        <b-btn variant="outline-info" @click="reset">Reset</b-btn>
+                    </b-input-group-append>
+                </b-input-group>
+                <pagination :current="currentPage" :total="totalBooks" :perPage="perPage" @page-changed="fetchFavBookForPage"></pagination>
+                <div class="d-flex justify-content-center flex-wrap clearfix">
+                    <b-alert show variant="secondary" v-if="favBooks.length < 1">No results</b-alert>
+                    <div class="card" v-for="favBook in favBooks">
+                        <img class="card-img-top" :src="bookCover(favBook.CoverThumb)" alt="Book cover" />
+                        <div class="card-body">
+                            <h4 class="card-title">{{ favBook.Title }}</h4>
+                            <p class="card-text">{{ favBook.Authors }}</p>
+                            <p class="card-text">{{ favBook.Subtitle }} {{ favBook.Description }}</p>
+                            <p class="card-text">{{ favBook.ISBN }}</p>
+                            <a href="#" class="btn btn-primary" @click="removeBook(favBook)">Remove</a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <b-alert show variant="secondary"  v-if="!$auth.check()">You must login to manage your books list</b-alert>
+            <b-alert show variant="secondary" v-if="!$auth.check()">You must login to manage your books list</b-alert>
         </div>
 
     </div>

@@ -1,5 +1,23 @@
 ﻿<template>
-    <div></div>
+    <div class="pagination">
+        <div class="pagination__left">
+            <a href="#" v-if="hasPrev()" @click="changePage(prevPage)">Previous</a>
+        </div>
+        <div class="pagination__mid">
+            <ul>
+                <li v-if="hasFirst()"><a href="#" @click="changePage(1)">1</a></li>
+                <li v-if="hasFirst()">...</li>
+                <li v-for="page in pages">
+                    <a href="#" @click="changePage(page)" :class="{current: current == page}">{{ page }}</a>
+                </li>
+                <li v-if="hasLast()">...</li>
+                <li v-if="hasLast()"><a href="#" @click="changePage(totalPages)">{{ totalPages }}</a></li>
+            </ul>
+        </div>
+        <div class="pagination__right">
+            <a href="#" v-if="hasNext()" @click="changePage(nextPage)">Next</a>
+        </div>
+    </div>
 </template>
-
 <script src="./pagination.js"></script>
+<style src="./pagination.css"></style>
